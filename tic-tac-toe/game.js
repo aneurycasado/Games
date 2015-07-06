@@ -1,5 +1,3 @@
-
-
 var game = {
   moves: [],
   board: [[0,0,0],[0,0,0],[0,0,0]],
@@ -16,55 +14,21 @@ var game = {
         this.currentPlayerNum = 1;
     }
     if(this.legalMove(num)){
-      this.makeMove(num);
-      this.updateBoard(num);
-      this.checkStatus();
       if(this.gameOver){
         this.notifyGameOver();
       }else{
-        this.nextPlayer();
+        this.makeMove(num);
+        this.updateBoard(num);
+        this.checkStatus();
+        if(this.gameOver){
+          this.notifyGameOver();
+        }else{
+          this.nextPlayer();
+        }
       }
     }else{
       this.notifyIllegalMove();
     }
-  },
-  makeMove: function(num){
-    var move = num;
-    switch(move){
-      case 1:
-        this.board[0][0] = this.currentPlayerNum;
-        break;
-      case 2:
-        this.board[0][1] = this.currentPlayerNum;
-        break;
-      case 3:
-        this.board[0][2] = this.currentPlayerNum;
-        break;
-      case 4:
-        this.board[1][0] = this.currentPlayerNum;
-        break;
-      case 5:
-        this.board[1][1] = this.currentPlayerNum;
-        break;
-      case 6:
-        this.board[1][2] = this.currentPlayerNum;
-        break;
-      case 7:
-        this.board[2][0] = this.currentPlayerNum;
-        break;
-      case 8:
-        this.board[2][1] = this.currentPlayerNum;
-        break;
-      case 9:
-        this.board[2][2] = this.currentPlayerNum;
-        break;
-    }
-  },
-  notifyIllegalMove: function(){
-    $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader">Illegal Move</h4>');
-    $("#modalBody").html('<img src = "img/illegalMove.jpg"/><h4 class="modal-title" id = "modalHeader">The other player has already played there.</h4>');
-    $('#modalFooter').html("")
-    $('#myModal').modal('show');
   },
   legalMove: function(move){
     switch(move){
@@ -133,13 +97,6 @@ var game = {
         break;
     }
   },
-  updateBoard: function(num){
-    if(this.currentPlayerNum == 1){
-      $("#" + num).html('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
-    }else{
-      $("#" + num).html('<span class="glyphicon glyphicon-adjust" aria-hidden="true"></span>');
-    }
-  },
   notifyGameOver: function(){
     $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader"> Player ' + this.currentPlayerNum +' has won.</h4>');
     $("#modalBody").html('<img src = "img/winner.jpg"/>');
@@ -152,6 +109,45 @@ var game = {
       var coord = this.winningCords[i];
       var num = coord[0]*3+1+coord[1];
       $("#" + num).addClass("won");
+    }
+  },
+  makeMove: function(num){
+    var move = num;
+    switch(move){
+      case 1:
+        this.board[0][0] = this.currentPlayerNum;
+        break;
+      case 2:
+        this.board[0][1] = this.currentPlayerNum;
+        break;
+      case 3:
+        this.board[0][2] = this.currentPlayerNum;
+        break;
+      case 4:
+        this.board[1][0] = this.currentPlayerNum;
+        break;
+      case 5:
+        this.board[1][1] = this.currentPlayerNum;
+        break;
+      case 6:
+        this.board[1][2] = this.currentPlayerNum;
+        break;
+      case 7:
+        this.board[2][0] = this.currentPlayerNum;
+        break;
+      case 8:
+        this.board[2][1] = this.currentPlayerNum;
+        break;
+      case 9:
+        this.board[2][2] = this.currentPlayerNum;
+        break;
+    }
+  },
+  updateBoard: function(num){
+    if(this.currentPlayerNum == 1){
+      $("#" + num).html('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
+    }else{
+      $("#" + num).html('<span class="glyphicon glyphicon-adjust" aria-hidden="true"></span>');
     }
   },
   checkStatus: function (){
@@ -241,6 +237,12 @@ var game = {
       this.currentPlayerNum = 1;
     }
     this.updateCurrentPlayer();
+  },
+  notifyIllegalMove: function(){
+    $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader">Illegal Move</h4>');
+    $("#modalBody").html('<img src = "img/illegalMove.jpg"/><h4 class="modal-title" id = "modalHeader">The other player has already played there.</h4>');
+    $('#modalFooter').html("")
+    $('#myModal').modal('show');
   },
   updateCurrentPlayer: function(){
     $("#currentPlayer").html("<h1> Player " + this.currentPlayerNum + "'s Turn </h1>");
