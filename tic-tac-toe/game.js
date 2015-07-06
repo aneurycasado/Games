@@ -1,10 +1,4 @@
-var makePlayers = function(){
-  var players = [];
-  var player1 = new Player(true);
-  var player2 = new Player(false);
-  players.push(player1,player2);
-  return players;
-}
+
 
 var game = {
   moves: [],
@@ -15,25 +9,27 @@ var game = {
   gameOver: false,
   currentMove: null,
   players: makePlayers(),
+  winningCords: null,
   runGame: function(num){
     if(this.currentPlayerNum == null){
         this.currentPlayer = this.players[0];
         this.currentPlayerNum = 1;
     }
-    this.makeMove(num);
-    this.updateBoard(num);
-    this.checkStatus();
-    if(this.gameOver){
-      this.notifyGameOver();
+    if(this.legalMove(num)){
+      this.makeMove(num);
+      this.updateBoard(num);
+      this.checkStatus();
+      if(this.gameOver){
+        this.notifyGameOver();
+      }else{
+        this.nextPlayer();
+      }
     }else{
-      this.nextPlayer();
+      this.notifyIllegalMove();
     }
   },
   makeMove: function(num){
     var move = num;
-    while(!this.legalMove(move)){
-      var move = console.log("Move is illegal please chose another move");
-    }
     switch(move){
       case 1:
         this.board[0][0] = this.currentPlayerNum;
@@ -62,7 +58,13 @@ var game = {
       case 9:
         this.board[2][2] = this.currentPlayerNum;
         break;
-      }
+    }
+  },
+  notifyIllegalMove: function(){
+    $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader">Illegal Move</h4>');
+    $("#modalBody").html('<img src = "img/illegalMove.jpg"/><h4 class="modal-title" id = "modalHeader">The other player has already played there.</h4>');
+    $('#modalFooter').html("")
+    $('#myModal').modal('show');
   },
   legalMove: function(move){
     switch(move){
@@ -139,19 +141,96 @@ var game = {
     }
   },
   notifyGameOver: function(){
-    console.log("Game Over");
+    $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader"> Player ' + this.currentPlayerNum +' has won.</h4>');
+    $("#modalBody").html('<img src = "img/winner.jpg"/>');
+    $('#modalFooter').html('<a class ="btn" href ="game.html"><button class="btn btn-primary">Play again</button></a>');
+    $('#myModal').modal('show');
+    this.makeWinningCordsGlow();
+  },
+  makeWinningCordsGlow: function(){
+    for(var i = 0; i < this.winningCords.length; i++){
+      var coord = this.winningCords[i];
+      var num = coord[0]*3+1+coord[1];
+      $("#" + num).addClass("won");
+    }
   },
   checkStatus: function (){
     for(var i = 0; i < this.board.length; i++){
       for(var j = 0; j < this.board[0].length; j++){
-        if(this.board[i][j] == 0){
-          this.gameOver = false;
-          return false;
+        var threeInaRow = this.checkThreeInaRow(i,j);
+        if(threeInaRow){
+          this.gameOver = true;
+          return true;
         }
       }
     }
-    this.gameOver = true;
-    return true;
+    this.gameOver = false;
+    return false;
+  },
+  checkThreeInaRow: function(row,col){
+    var right = this.checkRight(row,col);
+    var down = this.checkDown(row,col);
+    var num = this.board[row][col]
+    var diagnol = this.checkDiagnol(row,col);
+    if((right == true || down == true || diagnol == true) && num != 0){
+      return true
+    }else{
+      return false;
+    }
+  },
+  checkRight: function(row,col){
+    var num = this.board[row][col];
+    if(col + 1 > 2 || col + 2 > 2){
+      return false;
+    }else{
+      var secondNum = this.board[row][col+1];
+      var thirdNum = this.board[row][col+2];
+      if(num == secondNum && num == thirdNum){
+        this.winningCords = [[row,col],[row,col+1],[row,col+2]];
+        return true;
+      }else{
+        return false;
+      }
+    }
+  },
+  checkDown: function(row,col){
+    var num = this.board[row][col];
+    if(row + 1 > 2 || row + 2 > 2){
+      return false;
+    }else{
+      var secondNum = this.board[row+1][col];
+      var thirdNum = this.board[row+2][col];
+      if(num == secondNum && num == thirdNum){
+        this.winningCords = [[row,col],[row+1,col],[row+2,col]];
+        return true;
+      }else{
+        return false;
+      }
+    }
+  },
+  checkDiagnol: function(row,col){
+    var num = this.board[row][col];
+    if(row == 0 && col == 0){
+      var secondNum = this.board[row+1][col+1];
+      var thirdNum = this.board[row+2][col+2];
+      if(num == secondNum && num == thirdNum){
+        this.winningCords = [[row,col],[row+1,col+1],[row+2,col+2]];
+        return true;
+      }else{
+        return false;
+      }
+    }else if(row == 0 && col == 2){
+      var secondNum = this.board[row+1][col-1];
+      var thirdNum = this.board[row+2][col-2];
+      if(num == secondNum && num == thirdNum){
+        this.winningCords = [[row,col],[row+1,col-1],[row+2,col-2]]
+        return true;
+      }else{
+        return false;
+      }
+    }else{
+      return false;
+    }
   },
   nextPlayer: function(){
     if(this.currentPlayerNum == 1){
@@ -161,7 +240,11 @@ var game = {
       this.currentPlayer = this.players[0];
       this.currentPlayerNum = 1;
     }
+    this.updateCurrentPlayer();
   },
+  updateCurrentPlayer: function(){
+    $("#currentPlayer").html("<h1> Player " + this.currentPlayerNum + "'s Turn </h1>");
+  }
 }
 
 function Player(first) {
@@ -170,6 +253,13 @@ function Player(first) {
   this.winner = false;
 }
 
+function makePlayers(){
+  var players = [];
+  var player1 = new Player(true);
+  var player2 = new Player(false);
+  players.push(player1,player2);
+  return players;
+}
 
 $(document).ready(function(){
   $('#1').click(function(){
