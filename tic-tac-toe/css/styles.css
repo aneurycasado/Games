@@ -1,0 +1,87 @@
+
+body {
+	padding-top: 50px;
+
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    width: auto\9; /* ie8 */
+}
+
+.label {
+	font-size: .5em;
+
+}
+
+#myCarousel {
+	width: 100%;
+	max-height: 75%;
+}
+
+.container {
+	max-width: 1000px;
+  text-align:center;
+}
+
+.jumbotron{
+	background: #f2f9fe; /* Old browsers */
+	background: -moz-radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#f2f9fe), color-stop(100%,#d6f0fd)); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover, #f2f9fe 0%,#d6f0fd 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover, #f2f9fe 0%,#d6f0fd 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover, #f2f9fe 0%,#d6f0fd 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center, #f2f9fe 0%,#d6f0fd 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f9fe', endColorstr='#d6f0fd',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.modal-body {
+	text-align: center;
+}
+
+.modal-title {
+	text-align: center;
+}
+
+.col-sm-12 {
+  text-align: center;
+}
+
+.glyphicon {
+  font-size: 3em;
+  display: inline;
+  color: #3a87ad;
+}
+
+.item .glyphicon {
+  font-size: 7em;
+  display: inline;
+  color: #2C3539;
+}
+
+.carousel-indicators {
+	bottom: 0;
+}
+
+.carousel-indicators .active {
+	bottom: 0;
+
+}
+
+.carousel-indicators li {
+	background-color: #222
+}
+
+.btn{
+	padding: 20px;
+}
+
+.btn-primary {
+	background-color: #3a87ad;
+}
+
+.form-group{
+	padding: 20px;
+	margin-top: 20px;
+}
