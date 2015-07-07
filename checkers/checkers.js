@@ -1,81 +1,8 @@
-function makePieces(num){
-  var pieces = [];
-  for(var i = 0; i < 12; i++){
-    var id = num*12-12+i+1
-    var piece = new Piece(num,id);
-    pieces.push(piece);
-  }
-  return pieces;
-}
-
-function Piece(num,id){
-  this.king = false;
-  this.row = 0;
-  this.col = 0;
-  this.player = num;
-  this.taken = false;
-  this.id = id;
-}
-
-Piece.prototype.draw = function(num){
-  var row = this.row+1;
-  var col = this.col;
-  var rowDiv = $("#"+row);
-  this.div = rowDiv.children()[col+2];
-  var piece = this;
-  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
-  this.initateMove = function(){
-    $(this.div).click(function(){
-      $(this).addClass("glow");
-    })
-  }
-}
-
-function Player(home,num){
-  this.home = home;
-  this.pieces = makePieces(num);
-  this.num = num;
-  this.winner = false;
-}
-
-Player.prototype.play = function(){
-  var pieces = this.pieces;
-  for(var i = 0; i < pieces.length;i++){
-    pieces[i].initateMove();
-  }
-}
-
-function makeMove(object){
-  console.log("Here");
-
-  $(object).addClass("glow");
-}
-
-function makePlayers(){
-  var players = [];
-  var player1 = new Player(true,1);
-  var player2 = new Player(false,2);
-  players.push(player1)
-  players.push(player2)
-  return players;
-}
-
-function makeBoard(){
-  var board = [];
-  for(var i = 0; i < 8; i++){
-    var row = [];
-    for(var j = 0; j < 8; j++){
-      row.push(0);
-    }
-    board.push(row);
-  }
-  return board;
-}
-
 var game = {
   players: makePlayers(),
   board: makeBoard(),
   gameOver: false,
+  locked: false,
   placePieces: function(){
     var player1Pieces = this.players[0].pieces;
     var player2Pieces = this.players[1].pieces;
@@ -164,10 +91,178 @@ var game = {
   }
 }
 
+function makePlayers(){
+  var players = [];
+  var player1 = new Player(true,1);
+  var player2 = new Player(false,2);
+  players.push(player1)
+  players.push(player2)
+  return players;
+}
+
+function Player(home,num){
+  this.home = home;
+  this.pieces = makePieces(num);
+  this.num = num;
+  this.winner = false;
+}
+
+function makePieces(num){
+  var pieces = [];
+  for(var i = 0; i < 12; i++){
+    var id = num*12-12+i+1
+    var piece = new Piece(num,id);
+    pieces.push(piece);
+  }
+  return pieces;
+}
+
+function Piece(num,id){
+  this.king = false;
+  this.row = 0;
+  this.col = 0;
+  this.player = num;
+  this.taken = false;
+  this.id = id;
+}
+
+function makeBoard(){
+  var board = [];
+  for(var i = 0; i < 8; i++){
+    var row = [];
+    for(var j = 0; j < 8; j++){
+      row.push(0);
+    }
+    board.push(row);
+  }
+  return board;
+}
+
+Piece.prototype.draw = function(num){
+  var row = this.row+1;
+  var col = this.col;
+  var rowDiv = $("#"+row);
+  this.div = rowDiv.children()[col+2];
+  var piece = this;
+  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+}
 
 $(document).ready(function(){
   game.placePieces();
   game.drawPieces();
   game.players[0].play();
-  game.players[1].play();
 });
+
+Player.prototype.play = function(){
+  var num = this.num
+  if(num == 1){
+    game.players[1].unplay();
+  }else{
+    game.players[0].unplay();
+  }
+  var pieces = this.pieces;
+  for(var i = 0; i < pieces.length;i++){
+    pieces[i].initateMove();
+  }
+}
+
+Player.prototype.unplay = function(){
+  var pieces = this.pieces;
+  for(var i = 0; i < pieces.length;i++){
+    pieces[i].stopMove();
+  }
+}
+
+Piece.prototype.stopMove = function(){
+  $(this.div).unbind("click");
+}
+
+Piece.prototype.initateMove = function(){
+  var piece = this;
+  var row = this.row+1;
+  var col = this.col;
+  $(this.div).click(function(){
+    $(this).addClass("glow");
+    piece.makeMove();
+  });
+}
+
+
+Piece.prototype.makeMove = function(){
+  var piece = this;
+  var row = this.row;
+  var col = this.col;
+  if(this.player == 1){
+    var move1Row = row+1;
+    var move1Col = col+1;
+    var move2Row = row+1;
+    var move2Col = col-1;
+  }else{
+    var move1Row = row-1;
+    var move1Col = col+1;
+    var move2Row = row-1;
+    var move2Col = col-1;
+  }
+  var count = 0;
+  var initalX = 0;
+  var initalY = 0;
+  $(document).click(function(event){
+    var x = event.pageX;
+    var y = event.pageY;
+    if(count == 1){
+      if(initalX < x){
+        if(piece.isLegal(move1Row,move1Col)){
+          piece.placePiece(move1Row,move1Col);
+        }else{
+          piece.illegalMove();
+        }
+      }else if(initalX > x){
+        if(piece.isLegal(move2Row,move2Col)){
+          piece.placePiece(move2Row,move2Col);
+          $(this).unbind("click")
+        }else{
+          piece.illegalMove();
+        }
+      }
+    }
+    count = count + 1;
+    initalX = x;
+    initalY = y;
+  });
+}
+
+Piece.prototype.isLegal = function(row,col){
+  var board = game.board;
+  if(board[row][col] == undefined){
+    return false;
+  };
+  var newMove = board[row][col];
+  //console.log("In isLegal");
+  //console.log(game.board)
+  //console.log(row,col);
+  //console.log(newMove);
+  if(newMove == 0){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+Piece.prototype.placePiece = function(row,col){
+  //console.log("In placePiece");
+  this.remove();
+  this.row = row;
+  this.col = col;
+  this.initateMove();
+  this.draw();
+  //console.log("The game should be unlocked");
+  //console.log(game.locked);
+}
+
+Piece.prototype.remove = function(){
+  $(this.div).html("");
+}
+
+Piece.prototype.illegalMove = function(){
+  console.log("Illegal Move");
+}
