@@ -24,7 +24,6 @@ Piece.prototype.draw = function(){
 
 Piece.prototype.scale = function(){
   var piece = $("#img"+this.id);
-  console.log(piece)
   var row = this.row;
   var col = this.col;
   var boardWidth = $(window).width()/2;
@@ -50,53 +49,58 @@ Player.prototype.play = function(){
   var pieces = this.pieces
   var pieceImage1 = $("#"+pieces[0].id);
   pieceImage1.click(function(){
-    console.log(1);
+    makeMove(pieces[0]);
   });
   var pieceImage2 = $("#"+pieces[1].id);
   pieceImage2.click(function(){
-    console.log(2);
+    makeMove(pieces[1]);
   });
   var pieceImage3 = $("#"+pieces[2].id);
   pieceImage3.click(function(){
-    console.log(3);
+    makeMove(pieces[2]);
   });
   var pieceImage4 = $("#"+pieces[3].id);
   pieceImage4.click(function(){
-    console.log(4);
+    makeMove(pieces[3]);
   });
   var pieceImage5 = $("#"+pieces[4].id);
   pieceImage5.click(function(){
-    console.log(5);
+    makeMove(pieces[4]);
   });
   var pieceImage6 = $("#"+pieces[5].id);
   pieceImage6.click(function(){
-    console.log(6);
+    makeMove(pieces[5]);
   });
   var pieceImage7 = $("#"+pieces[6].id);
   pieceImage7.click(function(){
-    console.log(7);
+    makeMove(pieces[6]);
   });
   var pieceImage8 = $("#"+pieces[7].id);
   pieceImage8.click(function(){
-    console.log(8);
+    makeMove(pieces[7]);
   });
   var pieceImage9 = $("#"+pieces[8].id);
   pieceImage9.click(function(){
-    console.log(9);
+    makeMove(pieces[8]);
   });
   var pieceImage10 = $("#"+pieces[9].id);
   pieceImage10.click(function(){
-    console.log(10);
+    makeMove(this,pieces[9]);
   });
   var pieceImage11 = $("#"+pieces[10].id);
   pieceImage11.click(function(){
-    console.log(11);
+    makeMove(this,pieces[10]);
   });
   var pieceImage12 = $("#img"+pieces[11].id);
   pieceImage12.click(function(){
-    $(this).addClass("glow");
+    makeMove(this,pieces[11]);
   });
+}
 
+function makeMove(object){
+  console.log("Here");
+
+  $(object).addClass("glow");
 }
 
 function makePlayers(){
@@ -105,7 +109,6 @@ function makePlayers(){
   var player2 = new Player(false,2);
   players.push(player1)
   players.push(player2)
-  console.log(players);
   return players;
 }
 
@@ -124,6 +127,7 @@ function makeBoard(){
 var game = {
   players: makePlayers(),
   board: makeBoard(),
+  gameOver: false,
   placePieces: function(){
     var player1Pieces = this.players[0].pieces;
     var player2Pieces = this.players[1].pieces;
@@ -165,43 +169,40 @@ var game = {
     player1Pieces[11].col = 6;
     this.board[7][0] = player2Pieces[0];
     player2Pieces[0].row = 7;
-    player2Pieces[0].col = 0;
+    player2Pieces[0].col = 1;
     this.board[7][2] = player2Pieces[1];
     player2Pieces[1].row = 7;
-    player2Pieces[1].col = 2;
+    player2Pieces[1].col = 3;
     this.board[7][4] = player2Pieces[2];
     player2Pieces[2].row = 7;
-    player2Pieces[2].col = 4;
+    player2Pieces[2].col = 5;
     this.board[7][6] = player2Pieces[3];
     player2Pieces[3].row = 7;
-    player2Pieces[3].col = 6;
+    player2Pieces[3].col = 7;
     this.board[6][1] = player2Pieces[4];
     player2Pieces[4].row = 6;
-    player2Pieces[4].col = 1;
+    player2Pieces[4].col = 0;
     this.board[6][3] = player2Pieces[5];
     player2Pieces[5].row = 6;
-    player2Pieces[5].col = 3;
+    player2Pieces[5].col = 2;
     this.board[6][5] = player2Pieces[6];
     player2Pieces[6].row = 6;
-    player2Pieces[6].col = 5;
+    player2Pieces[6].col = 4;
     this.board[6][7] = player2Pieces[7];
     player2Pieces[7].row = 6;
-    player2Pieces[7].col = 7;
+    player2Pieces[7].col = 6;
     this.board[5][0] = player2Pieces[8];
     player2Pieces[8].row = 5;
-    player2Pieces[8].col = 0;
+    player2Pieces[8].col = 1;
     this.board[5][2] = player2Pieces[9];
     player2Pieces[9].row = 5;
-    player2Pieces[9].col = 2;
+    player2Pieces[9].col = 3;
     this.board[5][4] = player2Pieces[10];
     player2Pieces[10].row = 5;
-    player2Pieces[10].col = 4;
+    player2Pieces[10].col = 5;
     this.board[5][6] = player2Pieces[11];
     player2Pieces[11].row = 5;
-    player2Pieces[11].col = 6;
-    console.log("Board after place pieces");
-    console.log(this.board);
-    console.log(this.players);
+    player2Pieces[11].col = 7;
   },
   drawPieces: function(){
     var player1Pieces = this.players[0].pieces;
@@ -213,7 +214,6 @@ var game = {
       piece1.scale();
       piece2.draw();
       piece2.scale();
-
     }
   }
 }

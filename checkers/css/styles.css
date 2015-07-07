@@ -1,49 +1,20 @@
-.container {
-	max-width: 1000px;
-  text-align:center;
+
+.blue{
+  background-color: green;
+  padding: 20px;
 }
 
-.row {
-	padding-top: 20px;
+.row{
+  border: 10px;
 }
-
-
-.modal-body {
-	text-align: center;
-}
-
-.modal-title {
-	text-align: center;
-}
-
-.modal-footer {
-	text-align: center;
-}
-
-.col-sm-12 {
+#container {
   text-align: center;
 }
 
-.glyphicon {
-  font-size: 8em;
-  display: inline;
-  color: #3a87ad;
+#pieces {
+
 }
 
-.btn{
-	padding: 20px;
-}
-
-.btn-primary {
-	background-color: #3a87ad;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-    width: auto\9; /* ie8 */
-}
-
-.won .glyphicon {
-    color: #CCFFFF;
+.glow{
+  opacity: .50;
 }
