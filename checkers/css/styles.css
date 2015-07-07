@@ -1,12 +1,9 @@
 
 .blue{
-  background-color: green;
+  background-color: #3a87ad;;
   padding: 20px;
 }
 
-.row{
-  border: 10px;
-}
 #container {
   text-align: center;
 }
@@ -14,6 +11,34 @@
 #pieces {
 
 }
+
+#board{
+  margin-top: 20px;
+
+
+
+}
+.glyphicon {
+  font-size: 2em;
+  color: #3a87ad;
+
+}
+
+.player1 {
+  color: black;
+}
+
+.glow {
+  opacity: .50;
+
+}
+
+
+.col-xs-1 {
+  text-align: center;
+}
+
+
 
 .glow{
   opacity: .50;

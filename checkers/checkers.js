@@ -17,26 +17,19 @@ function Piece(num,id){
   this.id = id;
 }
 
-Piece.prototype.draw = function(){
-  var html = '<div id =' + this.id +'><img id = "img' + this.id +'" src ="img/player'+this.player+'.png"/></div>';
-  $("#pieces").append(html)
-}
-
-Piece.prototype.scale = function(){
-  var piece = $("#img"+this.id);
-  var row = this.row;
+Piece.prototype.draw = function(num){
+  var row = this.row+1;
   var col = this.col;
-  var boardWidth = $(window).width()/2;
-	var boardHeight = $(window).height();
-  var pieceHeight = boardHeight/11;
-  var pieceWidth = boardWidth/11;
-  var boardCellWidth = boardWidth/9;
-  var boardCellHeight = boardHeight/9;
-  var top = .95*pieceHeight + boardCellHeight * row;
-  var left = 6.20*pieceWidth + boardCellWidth * col;
-  piece.css({"position": "absolute","width": pieceWidth, "height": pieceHeight, "top": top, "left": left});
+  var rowDiv = $("#"+row);
+  this.div = rowDiv.children()[col+2];
+  var piece = this;
+  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+  this.initateMove = function(){
+    $(this.div).click(function(){
+      $(this).addClass("glow");
+    })
+  }
 }
-
 
 function Player(home,num){
   this.home = home;
@@ -46,55 +39,10 @@ function Player(home,num){
 }
 
 Player.prototype.play = function(){
-  var pieces = this.pieces
-  var pieceImage1 = $("#"+pieces[0].id);
-  pieceImage1.click(function(){
-    makeMove(pieces[0]);
-  });
-  var pieceImage2 = $("#"+pieces[1].id);
-  pieceImage2.click(function(){
-    makeMove(pieces[1]);
-  });
-  var pieceImage3 = $("#"+pieces[2].id);
-  pieceImage3.click(function(){
-    makeMove(pieces[2]);
-  });
-  var pieceImage4 = $("#"+pieces[3].id);
-  pieceImage4.click(function(){
-    makeMove(pieces[3]);
-  });
-  var pieceImage5 = $("#"+pieces[4].id);
-  pieceImage5.click(function(){
-    makeMove(pieces[4]);
-  });
-  var pieceImage6 = $("#"+pieces[5].id);
-  pieceImage6.click(function(){
-    makeMove(pieces[5]);
-  });
-  var pieceImage7 = $("#"+pieces[6].id);
-  pieceImage7.click(function(){
-    makeMove(pieces[6]);
-  });
-  var pieceImage8 = $("#"+pieces[7].id);
-  pieceImage8.click(function(){
-    makeMove(pieces[7]);
-  });
-  var pieceImage9 = $("#"+pieces[8].id);
-  pieceImage9.click(function(){
-    makeMove(pieces[8]);
-  });
-  var pieceImage10 = $("#"+pieces[9].id);
-  pieceImage10.click(function(){
-    makeMove(this,pieces[9]);
-  });
-  var pieceImage11 = $("#"+pieces[10].id);
-  pieceImage11.click(function(){
-    makeMove(this,pieces[10]);
-  });
-  var pieceImage12 = $("#img"+pieces[11].id);
-  pieceImage12.click(function(){
-    makeMove(this,pieces[11]);
-  });
+  var pieces = this.pieces;
+  for(var i = 0; i < pieces.length;i++){
+    pieces[i].initateMove();
+  }
 }
 
 function makeMove(object){
@@ -210,22 +158,16 @@ var game = {
     for(var i = 0; i < player1Pieces.length;i++){
       var piece1 = player1Pieces[i];
       var piece2 = player2Pieces[i];
-      piece1.draw();
-      piece1.scale();
-      piece2.draw();
-      piece2.scale();
+      piece1.draw(i);
+      piece2.draw(i);
     }
   }
 }
 
 
 $(document).ready(function(){
-	window.resizeTo(1000,1000)
-  var windowWidth = $(window).width()/2;
-	var windowHeight = $(window).height();
-  var board = $("#boardImage");
-	board.css({"width":windowWidth.toString(),"height":windowHeight.toString()});
   game.placePieces();
   game.drawPieces();
   game.players[0].play();
+  game.players[1].play();
 });
