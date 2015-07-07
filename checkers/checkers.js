@@ -2,7 +2,7 @@ var game = {
   players: makePlayers(),
   board: makeBoard(),
   gameOver: false,
-  locked: false,
+  currentPlayer: 1,
   placePieces: function(){
     var player1Pieces = this.players[0].pieces;
     var player2Pieces = this.players[1].pieces;
@@ -88,6 +88,17 @@ var game = {
       piece1.draw(i);
       piece2.draw(i);
     }
+  },
+  nextPlayer: function(){
+    if(this.currentPlayer == 1){
+      this.players[0].unplay();
+      this.players[1].play();
+      this.currentPlayer = 2;
+    }else{
+      this.players[1].unplay();
+      this.players[0].play();
+      this.currentPlayer = 1;
+    }
   }
 }
 
@@ -147,19 +158,7 @@ Piece.prototype.draw = function(num){
   $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
 }
 
-$(document).ready(function(){
-  game.placePieces();
-  game.drawPieces();
-  game.players[0].play();
-});
-
 Player.prototype.play = function(){
-  var num = this.num
-  if(num == 1){
-    game.players[1].unplay();
-  }else{
-    game.players[0].unplay();
-  }
   var pieces = this.pieces;
   for(var i = 0; i < pieces.length;i++){
     pieces[i].initateMove();
@@ -210,19 +209,27 @@ Piece.prototype.makeMove = function(){
     var x = event.pageX;
     var y = event.pageY;
     if(count == 1){
-      if(initalX < x){
+      console.log("We are in makeMove and should be testing legality.")
+      if(initalX < x && y > initalY){
         if(piece.isLegal(move1Row,move1Col)){
+          console.log("The move is legal.");
           piece.placePiece(move1Row,move1Col);
+          $(this).unbind("click");
         }else{
+          count = 0;
           piece.illegalMove();
         }
-      }else if(initalX > x){
+      }else if(initalX > x && y > initalY){
         if(piece.isLegal(move2Row,move2Col)){
+          console.log("The move is legal.");
           piece.placePiece(move2Row,move2Col);
-          $(this).unbind("click")
+          $(this).unbind("click");
         }else{
+          count = 0;
           piece.illegalMove();
         }
+      }else{
+        console.log("Wtf");
       }
     }
     count = count + 1;
@@ -233,10 +240,10 @@ Piece.prototype.makeMove = function(){
 
 Piece.prototype.isLegal = function(row,col){
   var board = game.board;
-  if(board[row][col] == undefined){
-    return false;
-  };
+  console.log("We are in isLegal");
   var newMove = board[row][col];
+  console.log("Row: " + row + "Col: " + col);
+  console.log("Contents: " + newMove);
   //console.log("In isLegal");
   //console.log(game.board)
   //console.log(row,col);
@@ -249,20 +256,33 @@ Piece.prototype.isLegal = function(row,col){
 }
 
 Piece.prototype.placePiece = function(row,col){
-  //console.log("In placePiece");
-  this.remove();
+  console.log("We are in placePiece");
+  this.removePiece();
   this.row = row;
   this.col = col;
-  this.initateMove();
   this.draw();
+  game.nextPlayer();
   //console.log("The game should be unlocked");
   //console.log(game.locked);
 }
 
-Piece.prototype.remove = function(){
+Piece.prototype.removePiece = function(){
   $(this.div).html("");
 }
 
 Piece.prototype.illegalMove = function(){
   console.log("Illegal Move");
 }
+
+
+$(document).ready(function(){
+  game.placePieces();
+  game.drawPieces();
+  game.players[0].play();
+});
+
+
+
+
+
+
