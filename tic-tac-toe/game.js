@@ -8,6 +8,7 @@ var game = {
   currentMove: null,
   players: makePlayers(),
   winningCords: null,
+  gameLocked: false,
   runGame: function(num){
     if(this.currentPlayerNum == null){
         this.currentPlayer = this.players[0];
@@ -98,11 +99,18 @@ var game = {
     }
   },
   notifyGameOver: function(){
-    $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader"> Player ' + this.currentPlayerNum +' has won.</h4>');
-    $("#modalBody").html('<img src = "img/winner.jpg"/>');
+    if(this.gameLocked){
+      var header = '<h4 class="modal-title" id = "modalHeader"> The Game is Locked. It is a tie.</h4>'
+      var body = '<img src = "img/padlock.png"/>'
+    }else{
+      var header = '<h4 class="modal-title" id = "modalHeader"> Player ' + this.currentPlayerNum +' has won.</h4>'
+      var body = '<img src = "img/winner.jpg"/>'
+      this.makeWinningCordsGlow();
+    }
+    $("#modalHeader").html(header);
+    $("#modalBody").html(body);
     $('#modalFooter').html('<a class ="btn" href ="game.html"><button class="btn btn-primary">Play again</button></a>');
     $('#myModal').modal('show');
-    this.makeWinningCordsGlow();
   },
   makeWinningCordsGlow: function(){
     for(var i = 0; i < this.winningCords.length; i++){
@@ -154,8 +162,13 @@ var game = {
     for(var i = 0; i < this.board.length; i++){
       for(var j = 0; j < this.board[0].length; j++){
         var threeInaRow = this.checkThreeInaRow(i,j);
+        var gameLocked = this.checkGameLocked();
         if(threeInaRow){
           this.gameOver = true;
+          return true;
+        }else if(gameLocked){
+          this.gameOver = true;
+          this.gameLocked = true;
           return true;
         }
       }
@@ -227,6 +240,16 @@ var game = {
     }else{
       return false;
     }
+  },checkGameLocked: function(){
+    var board = this.board
+    for(var i = 0; i < board.length;i++){
+      for(var j = 0; j < board[0].length;j++){
+        if(board[i][j] == 0){
+          return false
+        }
+      }
+    }
+    return true;
   },
   nextPlayer: function(){
     if(this.currentPlayerNum == 1){
