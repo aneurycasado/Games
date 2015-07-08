@@ -109,6 +109,12 @@ var game = {
       this.players[1].play();
       this.players[0].unplay();
     }
+  },updateBoard: function(piece,row,col){
+    var oldRow = piece.row;
+    var oldCol = piece.col;
+    this.board[oldRow][oldCol] = 0;
+    this.board[row][col] = piece;
+    console.log(this.board);
   }
 }
 
@@ -212,12 +218,12 @@ Piece.prototype.canMove = function(){
     var move2Col = col-1;
   }
   if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
-    console.log("Can move");
-    console.log(this.id);
+    //console.log("Can move");
+    //console.log(this.id);
     return true;
   }else{
-    console.log("Can't move");
-    console.log(this.id);
+    //console.log("Can't move");
+    //console.log(this.id);
     return false;
   }
 }
@@ -247,10 +253,10 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
     var move2Col = col-1;
   }
   $(document).click(function(event){
-    console.log("In here");
+    //console.log("In here");
     var x = event.pageX;
     var y = event.pageY;
-    console.log("We are in makeMove and should be testing legality.")
+    //console.log("We are in makeMove and should be testing legality.")
     if(x > pieceX){
       if(piece.isLegal(move1Row,move1Col)){
         console.log("The move is legal.");
@@ -275,7 +281,7 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
 
 Piece.prototype.isLegal = function(row,col){
   var board = game.board;
-  console.log("We are in isLegal");
+  //console.log("We are in isLegal");
   var newMove = board[row][col];
   if(newMove == 0){
     return true;
@@ -285,8 +291,9 @@ Piece.prototype.isLegal = function(row,col){
 }
 
 Piece.prototype.placePiece = function(row,col){
-  console.log("We are in placePiece");
+  console.log(game.board);
   this.removePiece();
+  game.updateBoard(this,row,col);
   this.row = row;
   this.col = col;
   this.draw();
