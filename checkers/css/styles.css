@@ -1,28 +1,20 @@
 
 .blue{
   background-color: #3a87ad;;
-  padding: 20px;
-}
-
-.white{
+  padding: 1.5em;
 }
 
 #container {
   text-align: center;
 }
 
-#pieces {
-
-}
 
 #board{
   margin-top: 20px;
 
-
-
 }
 .glyphicon {
-  font-size: 2em;
+  font-size: 2.0em;
   color: #3a87ad;
 
 }
@@ -33,7 +25,6 @@
 
 .glow {
   opacity: .50;
-
 }
 
 
@@ -42,7 +33,3 @@
 }
 
 
-
-.glow{
-  opacity: .50;
-}

@@ -311,6 +311,7 @@ Piece.prototype.placePiece = function(row,col){
 
 Piece.prototype.removePiece = function(){
   $(this.div).html("");
+  $(this.div).removeClass("glow");
 }
 
 Piece.prototype.illegalMove = function(){
