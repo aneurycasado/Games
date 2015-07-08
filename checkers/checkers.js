@@ -43,40 +43,40 @@ var game = {
     this.board[2][6] = player1Pieces[11];
     player1Pieces[11].row = 2;
     player1Pieces[11].col = 6;
-    this.board[7][0] = player2Pieces[0];
+    this.board[7][1] = player2Pieces[0];
     player2Pieces[0].row = 7;
     player2Pieces[0].col = 1;
-    this.board[7][2] = player2Pieces[1];
+    this.board[7][3] = player2Pieces[1];
     player2Pieces[1].row = 7;
     player2Pieces[1].col = 3;
-    this.board[7][4] = player2Pieces[2];
+    this.board[7][5] = player2Pieces[2];
     player2Pieces[2].row = 7;
     player2Pieces[2].col = 5;
-    this.board[7][6] = player2Pieces[3];
+    this.board[7][7] = player2Pieces[3];
     player2Pieces[3].row = 7;
     player2Pieces[3].col = 7;
-    this.board[6][1] = player2Pieces[4];
+    this.board[6][0] = player2Pieces[4];
     player2Pieces[4].row = 6;
     player2Pieces[4].col = 0;
-    this.board[6][3] = player2Pieces[5];
+    this.board[6][2] = player2Pieces[5];
     player2Pieces[5].row = 6;
     player2Pieces[5].col = 2;
-    this.board[6][5] = player2Pieces[6];
+    this.board[6][4] = player2Pieces[6];
     player2Pieces[6].row = 6;
     player2Pieces[6].col = 4;
-    this.board[6][7] = player2Pieces[7];
+    this.board[6][6] = player2Pieces[7];
     player2Pieces[7].row = 6;
     player2Pieces[7].col = 6;
-    this.board[5][0] = player2Pieces[8];
+    this.board[5][1] = player2Pieces[8];
     player2Pieces[8].row = 5;
     player2Pieces[8].col = 1;
-    this.board[5][2] = player2Pieces[9];
+    this.board[5][3] = player2Pieces[9];
     player2Pieces[9].row = 5;
     player2Pieces[9].col = 3;
-    this.board[5][4] = player2Pieces[10];
+    this.board[5][5] = player2Pieces[10];
     player2Pieces[10].row = 5;
     player2Pieces[10].col = 5;
-    this.board[5][6] = player2Pieces[11];
+    this.board[5][7] = player2Pieces[11];
     player2Pieces[11].row = 5;
     player2Pieces[11].col = 7;
   },
@@ -211,15 +211,21 @@ Piece.prototype.canMove = function(){
     var move1Col = col+1;
     var move2Row = row+1;
     var move2Col = col-1;
-  }else{
+  }else if(this.player == 2){
+    console.log("Player is " + this.player)
     var move1Row = row-1;
     var move1Col = col+1;
     var move2Row = row-1;
     var move2Col = col-1;
   }
   if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
-    //console.log("Can move");
-    //console.log(this.id);
+    if(this.player == 2){
+      console.log(game.board);
+      console.log("Can move");
+      console.log(this.id);
+      console.log("Current row: " +row+ " Current col: " +col)
+      console.log(move1Row,move1Col,move2Row,move2Col);
+    }
     return true;
   }else{
     //console.log("Can't move");
@@ -283,6 +289,7 @@ Piece.prototype.isLegal = function(row,col){
   var board = game.board;
   //console.log("We are in isLegal");
   var newMove = board[row][col];
+  console.log("The current new move is " + newMove);
   if(newMove == 0){
     return true;
   }else{
