@@ -101,14 +101,6 @@ var game = {
       this.players[0].play();
       this.currentPlayer = 1;
     }
-  },runGame: function(){
-    if(this.currentPlayer == 1){
-      this.players[0].play();
-      this.players[1].unplay();
-    }else if(this.currentPlayer == 2){
-      this.players[1].play();
-      this.players[0].unplay();
-    }
   },updateBoard: function(piece,row,col){
     var oldRow = piece.row;
     var oldCol = piece.col;
@@ -212,35 +204,37 @@ Piece.prototype.canMove = function(){
     var move2Row = row+1;
     var move2Col = col-1;
   }else if(this.player == 2){
-    console.log("Player is " + this.player)
     var move1Row = row-1;
     var move1Col = col+1;
     var move2Row = row-1;
     var move2Col = col-1;
   }
   if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
-    if(this.player == 2){
-      console.log(game.board);
-      console.log("Can move");
-      console.log(this.id);
-      console.log("Current row: " +row+ " Current col: " +col)
-      console.log(move1Row,move1Col,move2Row,move2Col);
-    }
     return true;
   }else{
-    //console.log("Can't move");
-    //console.log(this.id);
     return false;
   }
 }
 
-Piece.prototype.draw = function(num){
-  var row = this.row+1;
-  var col = this.col;
-  var rowDiv = $("#"+row);
-  this.div = rowDiv.children()[col+2];
-  var piece = this;
-  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+Piece.prototype.isLegal = function(row,col){
+  var board = game.board;
+  var newMove = board[row][col];
+  var player = this.player
+  if(newMove!= 0 && newMove != undefined){
+    var otherPlayer = newMove.player;
+  }
+  if(newMove == 0){
+    return true;
+  }else if(otherPlayer != undefined && otherPlayer != player){
+    console.log("CurrentPlayer " + player);
+    console.log("OtherPlayer" + otherPlayer);
+    console.log("This is the piece");
+    console.log(newMove);
+    console.log("Can eat");
+    return true
+  }else{
+    return false;
+  }
 }
 
 Piece.prototype.makeMove = function(pieceX,pieceY){
@@ -265,7 +259,17 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
     //console.log("We are in makeMove and should be testing legality.")
     if(x > pieceX){
       if(piece.isLegal(move1Row,move1Col)){
-        console.log("The move is legal.");
+        if(piece.canEat(move1Row,move1Col,"right")){
+          piece.eat(move1Row,move1Col);
+          if(piece.player == 1){
+            console.log("1");
+            move1Row++;
+          }else{
+            console.log("2");
+            move1Row--;
+          }
+          move1Col++;
+        }
         piece.placePiece(move1Row,move1Col);
         $(this).unbind("click");
       }else{
@@ -273,7 +277,19 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
       }
     }else if(x < pieceX){
       if(piece.isLegal(move2Row,move2Col)){
-        console.log("The move is legal.");
+        if(piece.canEat(move2Row,move2Col,"left")){
+          console.log("Can eat returned true");
+          piece.eat(move2Row,move2Col);
+          if(piece.player == 1){
+            console.log("3");
+            move2Row++;
+          }else{
+            console.log("4");
+            console.log(this.player1)
+            move2Row--;
+          }
+          move2Col--;
+        }
         piece.placePiece(move2Row,move2Col);
         $(this).unbind("click");
       }else{
@@ -285,33 +301,61 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
   });
 }
 
-Piece.prototype.isLegal = function(row,col){
-  var board = game.board;
-  //console.log("We are in isLegal");
-  var newMove = board[row][col];
-  console.log("The current new move is " + newMove);
-  if(newMove == 0){
+Piece.prototype.canEat = function(row,col,direction){
+  console.log("We are in can eat.");
+  var currentPlayer = this.player;
+  var otherPlayer = game.board[row][col].player;
+  console.log("Current Player: " + currentPlayer);
+  console.log("Other Player: " + otherPlayer);
+  if(direction == "right"){
+    var otherCol = col + 1;
+  }else if(direction == "left"){
+    var otherCol = col - 1;
+  }
+  if(this.player == 1){
+    var otherRow = row+1; 
+  }else{
+    var otherRow = row-1;
+  }
+  var otherSpace = game.board[otherRow][otherCol];
+  if(otherSpace == 0 && otherPlayer != undefined && otherPlayer != currentPlayer){
+    console.log("Can eat is returning true");
     return true;
   }else{
+    console.log("Can eat is returning false");
     return false;
   }
 }
 
+Piece.prototype.eat = function(row,col){
+  var piece = game.board[row][col];
+  console.log("This is the piece in that is going to be eaten");
+  console.log(piece);
+  piece.removePiece();
+  game.board[row][col] = 0;
+}
+
 Piece.prototype.placePiece = function(row,col){
-  console.log(game.board);
   this.removePiece();
   game.updateBoard(this,row,col);
   this.row = row;
   this.col = col;
   this.draw();
   game.nextPlayer();
-  //console.log("The game should be unlocked");
-  //console.log(game.locked);
 }
 
 Piece.prototype.removePiece = function(){
   $(this.div).html("");
   $(this.div).removeClass("glow");
+}
+
+Piece.prototype.draw = function(num){
+  var row = this.row+1;
+  var col = this.col;
+  var rowDiv = $("#"+row);
+  this.div = rowDiv.children()[col+2];
+  var piece = this;
+  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
 }
 
 Piece.prototype.illegalMove = function(){
