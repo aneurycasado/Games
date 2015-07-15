@@ -211,21 +211,41 @@ Piece.prototype.initateMove = function(){
 Piece.prototype.canMove = function(){
   var row = this.row;
   var col = this.col;
-  if(this.player == 1){
+  if(this.king){
     var move1Row = row+1;
     var move1Col = col+1;
     var move2Row = row+1;
     var move2Col = col-1;
-  }else if(this.player == 2){
-    var move1Row = row-1;
-    var move1Col = col+1;
-    var move2Row = row-1;
-    var move2Col = col-1;
-  }
-  if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
-    return true;
+    var move3Row = row-1;
+    var move3Col = col+1;
+    var move4Row = row-1;
+    var move4Col = col-1;
+    console.log("We are in canMove and are checking the king piece");
+    console.log(move1Row,move2Row,move3Row,move4Row,move1Col,move2Col,move3Col,move4Col);
+    if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col) || this.isLegal(move3Row,move3Col) || this.isLegal(move4Row,move4Col)){
+      console.log("The king piece returned true");
+      return true;
+    }else{
+      console.log("The king piece returned false");
+      return false
+    }
   }else{
-    return false;
+    if(this.player == 1){
+      var move1Row = row+1;
+      var move1Col = col+1;
+      var move2Row = row+1;
+      var move2Col = col-1;
+    }else if(this.player == 2){
+      var move1Row = row-1;
+      var move1Col = col+1;
+      var move2Row = row-1;
+      var move2Col = col-1;
+    }
+    if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
+      return true;
+    }else{
+      return false;
+    }
   }
 }
 
@@ -234,6 +254,8 @@ Piece.prototype.isLegal = function(row,col){
   if(row < 0 || row > 7){
     return false;
   }
+  console.log("This is the row " + row);
+  console.log("This is the col " + col);
   var newMove = board[row][col];
   var player = this.player
   if(newMove!= 0 && newMove != undefined){
@@ -266,23 +288,121 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
   $(document).click(function(event){
     var x = event.pageX;
     var y = event.pageY;
-    //console.log("We are in makeMove and should be testing legality.")
     if(piece.king == false){
-          if(x > pieceX){
-            console.log("Right");
-            makeMoveRight(move1Row,move1Col,piece);
-            $(this).unbind("click");
-          }else if(x < pieceX){
-            console.log("Left");
-            makeMoveLeft(move2Row,move2Col,piece);
-            $(this).unbind("click");
-          }else{
-            console.log("Wtf");
-          }
-      }else if(piece.king == true){
-        console.log("King");
+        if(x > pieceX){
+          makeMoveRight(move1Row,move1Col,piece);
+          $(this).unbind("click");
+        }else if(x < pieceX){
+          makeMoveLeft(move2Row,move2Col,piece);
+          $(this).unbind("click");
+        }else{
+          console.log("Wtf");
+        }
+    }else if(piece.king == true){
+      if(x > pieceX && y < pieceY){
+        makeMoveRightUp(row,col,piece);
+        $(this).unbind("click");
+      }else if(x < pieceX && y < pieceY){
+        makeMoveLeftUp(row,col,piece);
+        $(this).unbind("click");
+      }else if(x > pieceX && y > pieceY){
+        makeMoveRightDown(row,col,piece);
+        $(this).unbind("click");
+      }else if(x < pieceX && y > pieceY){
+        makeMoveLeftDown(row,col,piece);
+        $(this).unbind("click");
       }
+    }
   });
+}
+
+function makeMoveLeftUp(row,col,piece){
+  var newRow = row - 1;
+  var newCol = col - 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"left")){
+      piece.eat(newRow,newCol)
+      newRow--;
+      newCol--;
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click");
+    }else if(game.board[newRow][newCol] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+      piece.illegalMove()
+    }else{
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click")
+    }
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveRightUp(row,col,piece){
+  var newRow = row - 1;
+  var newCol = col + 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"right")){
+      piece.eat(newRow,newCol)
+      newRow--;
+      newCol++;
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click");
+    }else if(game.board[newRow][newCol] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+      piece.illegalMove()
+    }else{
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click")
+    }
+  }else{
+    piece.illegalMove();
+  }
+}
+
+
+function makeMoveRightDown(row,col,piece){
+  var newRow = row + 1;
+  var newCol = col + 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"right")){
+      piece.eat(newRow,newCol)
+      newRow++;
+      newCol++;
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click");
+    }else if(game.board[newRow][newCol] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+      piece.illegalMove()
+    }else{
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click")
+    }
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveLeftDown(row,col,piece){
+  var newRow = row + 1;
+  var newCol = col - 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"left")){
+      piece.eat(newRow,newCol)
+      newRow++;
+      newCol--;
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click");
+    }else if(game.board[newRow][newCol] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+      piece.illegalMove()
+    }else{
+      piece.placePiece(newRow,newCol);
+      $(piece.div).unbind("click")
+    }
+  }else{
+    piece.illegalMove();
+  }
 }
 
 function makeMoveRight(move1Row,move1Col,piece){
@@ -339,7 +459,6 @@ function makeMoveLeft(move2Row,move2Col,piece){
     piece.illegalMove();
   }
 }
-
 
 Piece.prototype.canEat = function(row,col,direction){
   var currentPlayer = this.player;
@@ -401,7 +520,7 @@ Piece.prototype.draw = function(num){
   this.div = rowDiv.children()[col+2];
   var piece = this;
   if(this.king == true){
-    $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+    $(this.div).html('<span class="glyphicon glyphicon-tower player' + this.player + '" aria-hidden="true"></span>');
   }else if(this.king == false){
     $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
   }
