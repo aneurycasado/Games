@@ -91,22 +91,34 @@ var game = {
     }
   },
   nextPlayer: function(){
-    this.locked = false;
-    if(this.currentPlayer == 1){
-      this.players[0].unplay();
-      this.players[1].play();
-      this.currentPlayer = 2;
+    if(this.isGameOver()){
+      console.log("Game Over");
     }else{
-      this.players[1].unplay();
-      this.players[0].play();
-      this.currentPlayer = 1;
+      this.locked = false;
+      if(this.currentPlayer == 1){
+        this.players[0].unplay();
+        this.players[1].play();
+        this.currentPlayer = 2;
+      }else{
+        this.players[1].unplay();
+        this.players[0].play();
+        this.currentPlayer = 1;
+      }
+      this.updateCurrentPlayer();
     }
+  },isGameOver: function(){
+    var player1 = this.players[0];
+    var player2 = this.players[1];
+    return false;
   },updateBoard: function(piece,row,col){
     var oldRow = piece.row;
     var oldCol = piece.col;
     this.board[oldRow][oldCol] = 0;
     this.board[row][col] = piece;
     console.log(this.board);
+  },updateCurrentPlayer: function(){
+    var currentPlayer = this.currentPlayer
+    $("#currentPlayer").html('<h1 id = "player"' + currentPlayer + '>Player ' + currentPlayer + '</h1>');
   }
 }
 
@@ -143,6 +155,7 @@ function Piece(num,id){
   this.player = num;
   this.taken = false;
   this.id = id;
+  this.removed = false;
 }
 
 function makeBoard(){
@@ -190,7 +203,7 @@ Piece.prototype.initateMove = function(){
         piece.makeMove(pieceX,pieceY);
       }else{
         console.log("The game is currently locked.");
-      } 
+      }
     });
   }
 }
@@ -218,6 +231,9 @@ Piece.prototype.canMove = function(){
 
 Piece.prototype.isLegal = function(row,col){
   var board = game.board;
+  if(row < 0 || row > 7){
+    return false;
+  }
   var newMove = board[row][col];
   var player = this.player
   if(newMove!= 0 && newMove != undefined){
@@ -226,11 +242,6 @@ Piece.prototype.isLegal = function(row,col){
   if(newMove == 0){
     return true;
   }else if(otherPlayer != undefined && otherPlayer != player){
-    console.log("CurrentPlayer " + player);
-    console.log("OtherPlayer" + otherPlayer);
-    console.log("This is the piece");
-    console.log(newMove);
-    console.log("Can eat");
     return true
   }else{
     return false;
@@ -253,76 +264,105 @@ Piece.prototype.makeMove = function(pieceX,pieceY){
     var move2Col = col-1;
   }
   $(document).click(function(event){
-    //console.log("In here");
     var x = event.pageX;
     var y = event.pageY;
     //console.log("We are in makeMove and should be testing legality.")
-    if(x > pieceX){
-      if(piece.isLegal(move1Row,move1Col)){
-        if(piece.canEat(move1Row,move1Col,"right")){
-          piece.eat(move1Row,move1Col);
-          if(piece.player == 1){
-            console.log("1");
-            move1Row++;
+    if(piece.king == false){
+          if(x > pieceX){
+            console.log("Right");
+            makeMoveRight(move1Row,move1Col,piece);
+            $(this).unbind("click");
+          }else if(x < pieceX){
+            console.log("Left");
+            makeMoveLeft(move2Row,move2Col,piece);
+            $(this).unbind("click");
           }else{
-            console.log("2");
-            move1Row--;
+            console.log("Wtf");
           }
-          move1Col++;
-        }
-        piece.placePiece(move1Row,move1Col);
-        $(this).unbind("click");
-      }else{
-        piece.illegalMove();
+      }else if(piece.king == true){
+        console.log("King");
       }
-    }else if(x < pieceX){
-      if(piece.isLegal(move2Row,move2Col)){
-        if(piece.canEat(move2Row,move2Col,"left")){
-          console.log("Can eat returned true");
-          piece.eat(move2Row,move2Col);
-          if(piece.player == 1){
-            console.log("3");
-            move2Row++;
-          }else{
-            console.log("4");
-            console.log(this.player1)
-            move2Row--;
-          }
-          move2Col--;
-        }
-        piece.placePiece(move2Row,move2Col);
-        $(this).unbind("click");
-      }else{
-        piece.illegalMove();
-      }
-    }else{
-      console.log("Wtf");
-    }
   });
 }
 
+function makeMoveRight(move1Row,move1Col,piece){
+  if(piece.isLegal(move1Row,move1Col)){
+    if(piece.canEat(move1Row,move1Col,"right")){
+      console.log("Can Eat returned true");
+      //if(piece.doubleEat(move2Row,move2Col,"left")){}
+      piece.eat(move1Row,move1Col);
+      if(piece.player == 1){
+        console.log("1");
+        move1Row++;
+      }else{
+        console.log("2");
+        move1Row--;
+      }
+      move1Col++;
+      piece.placePiece(move1Row,move1Col);
+      $(piece.div).unbind("click")
+    }else if(game.board[move1Row][move1Col] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+      piece.illegalMove()
+    }else{
+      piece.placePiece(move1Row,move1Col);
+      $(piece.div).unbind("click")
+    }
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveLeft(move2Row,move2Col,piece){
+  if(piece.isLegal(move2Row,move2Col)){
+    if(piece.canEat(move2Row,move2Col,"left")){
+      //if(piece.doubleEat(move2Row,move2Col,"left")){}
+      piece.eat(move2Row,move2Col);
+      if(piece.player == 1){
+        console.log("3");
+        move2Row++;
+      }else{
+        console.log("4");
+        console.log(this.player1)
+        move2Row--;
+      }
+      move2Col--;
+      piece.placePiece(move2Row,move2Col);
+      $(piece.div).unbind("click")
+    }else if(game.board[move2Row][move2Col] != 0 && piece.canEatB == false){
+      console.log("Two pieces in a row");
+    }else{
+      piece.placePiece(move2Row,move2Col);
+      $(this).unbind("click");
+    }
+  }else{
+    piece.illegalMove();
+  }
+}
+
+
 Piece.prototype.canEat = function(row,col,direction){
-  console.log("We are in can eat.");
   var currentPlayer = this.player;
   var otherPlayer = game.board[row][col].player;
-  console.log("Current Player: " + currentPlayer);
-  console.log("Other Player: " + otherPlayer);
   if(direction == "right"){
     var otherCol = col + 1;
   }else if(direction == "left"){
     var otherCol = col - 1;
   }
   if(this.player == 1){
-    var otherRow = row+1; 
+    var otherRow = row+1;
   }else{
     var otherRow = row-1;
   }
+  if(otherRow > 7 || otherRow < 0){
+    return false;
+  }
   var otherSpace = game.board[otherRow][otherCol];
   if(otherSpace == 0 && otherPlayer != undefined && otherPlayer != currentPlayer){
-    console.log("Can eat is returning true");
+    this.canEatB = true;
     return true;
   }else{
-    console.log("Can eat is returning false");
+    this.canEatB = false;
     return false;
   }
 }
@@ -332,6 +372,7 @@ Piece.prototype.eat = function(row,col){
   console.log("This is the piece in that is going to be eaten");
   console.log(piece);
   piece.removePiece();
+  console.log(game.players);
   game.board[row][col] = 0;
 }
 
@@ -340,6 +381,9 @@ Piece.prototype.placePiece = function(row,col){
   game.updateBoard(this,row,col);
   this.row = row;
   this.col = col;
+  if(this.row == 7 || this.row == 0){
+    this.king = true;
+  }
   this.draw();
   game.nextPlayer();
 }
@@ -347,6 +391,7 @@ Piece.prototype.placePiece = function(row,col){
 Piece.prototype.removePiece = function(){
   $(this.div).html("");
   $(this.div).removeClass("glow");
+  this.remove = true;
 }
 
 Piece.prototype.draw = function(num){
@@ -355,11 +400,17 @@ Piece.prototype.draw = function(num){
   var rowDiv = $("#"+row);
   this.div = rowDiv.children()[col+2];
   var piece = this;
-  $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+  if(this.king == true){
+    $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+  }else if(this.king == false){
+    $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+  }
 }
 
 Piece.prototype.illegalMove = function(){
-  console.log("Illegal Move");
+  $(this.div).removeClass("glow");
+  $(this).unbind("click");
+  game.locked = false;
 }
 
 $(document).ready(function(){
@@ -367,9 +418,3 @@ $(document).ready(function(){
   game.drawPieces();
   game.players[0].play();
 });
-
-
-
-
-
-

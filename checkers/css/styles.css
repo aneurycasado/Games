@@ -23,6 +23,14 @@
   color: black;
 }
 
+#player1 {
+  color: black;
+}
+
+#player2 {
+  color: #3a87ad;;
+}
+
 .glow {
   opacity: .50;
 }
@@ -31,5 +39,3 @@
 .col-xs-1 {
   text-align: center;
 }
-
-
