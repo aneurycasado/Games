@@ -128,10 +128,14 @@ var game = {
 }
 
 function checkGameOver(player){
-  for(var i = 0; i < player.pieces.length;i++){
-    var piece = player.pieces[i];
-    if(piece.removed == false){
-      return false;
+  var num = player.num;
+  for(var i = 0; i < game.board.length;i++){
+    var row = game.board[i];
+    for(var j = 0; j < row.length;j++){
+      var piece = row[j];
+      if(piece.player == num){
+        return false
+      }
     }
   }
   return true;
@@ -277,21 +281,15 @@ Piece.prototype.isLegal = function(row,col){
     return true;
   }else if(otherPlayer != undefined && otherPlayer != player){
     if(col > this.col){
-      console.log("Col is great than current col");
       if(this.canEat(row,col,"right")){
-        console.log("Can eat returned true")
         return true;
       }else{
-        console.log("Can eat returned false")
         return false;
       }
     }else if(col < this.col){
-      console.log("Col is less than current col");
       if(this.canEat(row,col,"left")){
-        console.log("Can eat return true");
         return true;
       }else{
-        console.log("Can eat returned false")
         return false;
       }
     }
@@ -302,6 +300,10 @@ Piece.prototype.isLegal = function(row,col){
 
 Piece.prototype.canEat = function(row,col,direction){
   var currentPlayer = this.player;
+  console.log(row,col);
+  if(row < 0 || row > 7 || col < 0 || col > 7){
+    return false
+  };
   var otherPlayer = game.board[row][col].player;
   if(direction == "right"){
     var otherCol = col + 1;
@@ -386,6 +388,9 @@ function makeMoveLeftUp(row,col,piece){
       piece.eat(newRow,newCol)
       newRow--;
       newCol--;
+      var position = doubleJumpKing(newRow,newCol,piece);
+      newRow = position[0];
+      newCol = position[1];
     };
     piece.placePiece(newRow,newCol);
     $(piece.div).unbind("click")
@@ -402,6 +407,9 @@ function makeMoveRightUp(row,col,piece){
       piece.eat(newRow,newCol)
       newRow--;
       newCol++;
+      var position = doubleJumpKing(newRow,newCol,piece);
+      newRow = position[0];
+      newCol = position[1];
     };
     piece.placePiece(newRow,newCol);
     $(piece.div).unbind("click")
@@ -418,6 +426,9 @@ function makeMoveRightDown(row,col,piece){
       piece.eat(newRow,newCol)
       newRow++;
       newCol++;
+      var position = doubleJumpKing(newRow,newCol,piece);
+      newRow = position[0];
+      newCol = position[1];
     };
     piece.placePiece(newRow,newCol);
     $(piece.div).unbind("click")
@@ -434,6 +445,9 @@ function makeMoveLeftDown(row,col,piece){
       piece.eat(newRow,newCol)
       newRow++;
       newCol--;
+      var position = doubleJumpKing(newRow,newCol,piece);
+      newRow = position[0];
+      newCol = position[1];
     };
     piece.placePiece(newRow,newCol);
     $(piece.div).unbind("click")
@@ -442,16 +456,42 @@ function makeMoveLeftDown(row,col,piece){
   }
 }
 
+function doubleJumpKing(newRow,newCol,piece){
+  if(piece.canEat(newRow+1,newCol-1,"left")){
+    piece.eat(newRow+1,newCol-1)
+    newRow = newRow + 2;
+    newCol = newCol - 2;
+  }else if(piece.canEat(newRow+1,newCol+1,"right")){
+    piece.eat(newRow+1,newCol+1)
+    newRow = newRow+2;
+    newCol = newCol+2;
+  }else if(piece.canEat(newRow-1,newCol-1,"left")){
+    piece.eat(newRow-1,newCol-1)
+    newRow = newRow - 2;
+    newCol = newCol - 2;
+  }else if(piece.canEat(newRow-1,newCol+1,"right")){
+    piece.eat(newRow-1,newCol+1);
+    newRow = newRow-2;
+    newCol = newCol+2;
+  }
+  return [newRow,newCol];
+}
+
 function makeMoveRight(move1Row,move1Col,piece){
   if(piece.isLegal(move1Row,move1Col)){
     if(piece.canEat(move1Row,move1Col,"right")){
       piece.eat(move1Row,move1Col);
       if(piece.player == 1){
         move1Row++;
+        var modifier = 1;
       }else{
         move1Row--;
+        var modifier = -1;
       }
       move1Col++;
+      var position = doubleJumpMen(move1Row,move1Col,modifier,piece);
+      var move1Row = position[0];
+      var move1Col = position[1];
     };
     piece.placePiece(move1Row,move1Col);
     $(piece.div).unbind("click")
@@ -463,14 +503,18 @@ function makeMoveRight(move1Row,move1Col,piece){
 function makeMoveLeft(move2Row,move2Col,piece){
   if(piece.isLegal(move2Row,move2Col)){
     if(piece.canEat(move2Row,move2Col,"left")){
-      //if(piece.doubleEat(move2Row,move2Col,"left")){}
       piece.eat(move2Row,move2Col);
       if(piece.player == 1){
         move2Row++;
+        var modifier = 1;
       }else{
         move2Row--;
+        var modifier = -1;
       }
       move2Col--;
+      var position = doubleJumpMen(move2Row,move2Col,modifier,piece);
+      var move2Row = position[0];
+      var move2Col = position[1];
     };
     piece.placePiece(move2Row,move2Col);
     $(this).unbind("click");
@@ -479,12 +523,31 @@ function makeMoveLeft(move2Row,move2Col,piece){
   }
 };
 
+function doubleJumpMen(row,col,modifier,piece){
+  if(piece.canEat(row+modifier,col-1,"left")){
+    piece.eat(row+modifier,col-1);
+    if(piece.player == 1){
+      row = row+modifier+1;
+    }else{
+      row = row+modifier-1;
+    }
+    col = col - 2;
+  }else if(piece.canEat(row+modifier,col+1,"right")){
+    piece.eat(row+modifier,col+1);
+    if(piece.player == 1){
+      row = row + modifier+1;
+    }else{
+      row = row+modifier-1;
+    }
+    col = col + 2;
+  }
+  return [row,col];
+}
+
+
 Piece.prototype.eat = function(row,col){
   var piece = game.board[row][col];
-  console.log("This is the piece in that is going to be eaten");
-  console.log(piece);
   piece.removePiece();
-  console.log(game.players);
   game.board[row][col] = 0;
 }
 
@@ -503,7 +566,6 @@ Piece.prototype.placePiece = function(row,col){
 Piece.prototype.removePiece = function(){
   $(this.div).html("");
   $(this.div).removeClass("glow");
-  this.removed = true;
 }
 
 Piece.prototype.draw = function(num){
