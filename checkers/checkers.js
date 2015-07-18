@@ -111,10 +111,19 @@ var game = {
     var player2 = this.players[1];
     var gameOver1 = checkGameOver(player1);
     var gameOver2 = checkGameOver(player2);
-    if(gameOver1 || gameOver2){
-      return true
+    if(gameOver1){
+      $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader"> Player 2 has won.</h4>');
+      $("#modalBody").html('<img src = "img/winner.jpg"/>');
+      $('#modalFooter').html('<a class ="btn" href ="checker.html"><button class="btn btn-primary">Play again</button></a>');
+      $('#myModal').modal('show');
+      return true;
+    }else if(gameOver2){
+      $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader"> Player 1 has won.</h4>');
+      $("#modalBody").html('<img src = "img/winner.jpg"/>');
+      $('#modalFooter').html('<a class ="btn" href ="checker.html"><button class="btn btn-primary">Play again</button></a>');
+      $('#myModal').modal('show');
     }else{
-      return false
+      return false;
     }
   },updateBoard: function(piece,row,col){
     var oldRow = piece.row;
@@ -585,6 +594,10 @@ Piece.prototype.illegalMove = function(){
   $(this.div).removeClass("glow");
   $(this).unbind("click");
   game.locked = false;
+  $("#modalHeader").html('<h4 class="modal-title" id = "modalHeader">Illegal Move</h4>');
+  $("#modalBody").html('<img src = "img/illegalMove.jpg"/><h4 class="modal-title" id = "modalHeader">Pick another spot.</h4>');
+  $('#modalFooter').html("")
+  $('#myModal').modal('show');
 }
 
 $(document).ready(function(){
