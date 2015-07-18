@@ -1,129 +1,9 @@
-function makePieces(num){
-  var pieces = [];
-  for(var i = 0; i < 12; i++){
-    var id = num*12-12+i+1
-    var piece = new Piece(num,id);
-    pieces.push(piece);
-  }
-  return pieces;
-}
-
-function Piece(num,id){
-  this.king = false;
-  this.row = 0;
-  this.col = 0;
-  this.player = num;
-  this.taken = false;
-  this.id = id;
-}
-
-Piece.prototype.draw = function(){
-  var html = '<div id =' + this.id +'><img id = "img' + this.id +'" src ="img/player'+this.player+'.png"/></div>';
-  $("#pieces").append(html)
-}
-
-Piece.prototype.scale = function(){
-  var piece = $("#img"+this.id);
-  console.log(piece)
-  var row = this.row;
-  var col = this.col;
-  var boardWidth = $(window).width()/2;
-	var boardHeight = $(window).height();
-  var pieceHeight = boardHeight/11;
-  var pieceWidth = boardWidth/11;
-  var boardCellWidth = boardWidth/9;
-  var boardCellHeight = boardHeight/9;
-  var top = .95*pieceHeight + boardCellHeight * row;
-  var left = 6.20*pieceWidth + boardCellWidth * col;
-  piece.css({"position": "absolute","width": pieceWidth, "height": pieceHeight, "top": top, "left": left});
-}
-
-
-function Player(home,num){
-  this.home = home;
-  this.pieces = makePieces(num);
-  this.num = num;
-  this.winner = false;
-}
-
-Player.prototype.play = function(){
-  var pieces = this.pieces
-  var pieceImage1 = $("#"+pieces[0].id);
-  pieceImage1.click(function(){
-    console.log(1);
-  });
-  var pieceImage2 = $("#"+pieces[1].id);
-  pieceImage2.click(function(){
-    console.log(2);
-  });
-  var pieceImage3 = $("#"+pieces[2].id);
-  pieceImage3.click(function(){
-    console.log(3);
-  });
-  var pieceImage4 = $("#"+pieces[3].id);
-  pieceImage4.click(function(){
-    console.log(4);
-  });
-  var pieceImage5 = $("#"+pieces[4].id);
-  pieceImage5.click(function(){
-    console.log(5);
-  });
-  var pieceImage6 = $("#"+pieces[5].id);
-  pieceImage6.click(function(){
-    console.log(6);
-  });
-  var pieceImage7 = $("#"+pieces[6].id);
-  pieceImage7.click(function(){
-    console.log(7);
-  });
-  var pieceImage8 = $("#"+pieces[7].id);
-  pieceImage8.click(function(){
-    console.log(8);
-  });
-  var pieceImage9 = $("#"+pieces[8].id);
-  pieceImage9.click(function(){
-    console.log(9);
-  });
-  var pieceImage10 = $("#"+pieces[9].id);
-  pieceImage10.click(function(){
-    console.log(10);
-  });
-  var pieceImage11 = $("#"+pieces[10].id);
-  pieceImage11.click(function(){
-    console.log(11);
-  });
-  var pieceImage12 = $("#img"+pieces[11].id);
-  pieceImage12.click(function(){
-    $(this).addClass("glow");
-  });
-
-}
-
-function makePlayers(){
-  var players = [];
-  var player1 = new Player(true,1);
-  var player2 = new Player(false,2);
-  players.push(player1)
-  players.push(player2)
-  console.log(players);
-  return players;
-}
-
-function makeBoard(){
-  var board = [];
-  for(var i = 0; i < 8; i++){
-    var row = [];
-    for(var j = 0; j < 8; j++){
-      row.push(0);
-    }
-    board.push(row);
-  }
-  return board;
-}
-
 var game = {
   players: makePlayers(),
   board: makeBoard(),
+  gameOver: false,
+  currentPlayer: 1,
+  locked: false,
   placePieces: function(){
     var player1Pieces = this.players[0].pieces;
     var player2Pieces = this.players[1].pieces;
@@ -163,45 +43,42 @@ var game = {
     this.board[2][6] = player1Pieces[11];
     player1Pieces[11].row = 2;
     player1Pieces[11].col = 6;
-    this.board[7][0] = player2Pieces[0];
+    this.board[7][1] = player2Pieces[0];
     player2Pieces[0].row = 7;
-    player2Pieces[0].col = 0;
-    this.board[7][2] = player2Pieces[1];
+    player2Pieces[0].col = 1;
+    this.board[7][3] = player2Pieces[1];
     player2Pieces[1].row = 7;
-    player2Pieces[1].col = 2;
-    this.board[7][4] = player2Pieces[2];
+    player2Pieces[1].col = 3;
+    this.board[7][5] = player2Pieces[2];
     player2Pieces[2].row = 7;
-    player2Pieces[2].col = 4;
-    this.board[7][6] = player2Pieces[3];
+    player2Pieces[2].col = 5;
+    this.board[7][7] = player2Pieces[3];
     player2Pieces[3].row = 7;
-    player2Pieces[3].col = 6;
-    this.board[6][1] = player2Pieces[4];
+    player2Pieces[3].col = 7;
+    this.board[6][0] = player2Pieces[4];
     player2Pieces[4].row = 6;
-    player2Pieces[4].col = 1;
-    this.board[6][3] = player2Pieces[5];
+    player2Pieces[4].col = 0;
+    this.board[6][2] = player2Pieces[5];
     player2Pieces[5].row = 6;
-    player2Pieces[5].col = 3;
-    this.board[6][5] = player2Pieces[6];
+    player2Pieces[5].col = 2;
+    this.board[6][4] = player2Pieces[6];
     player2Pieces[6].row = 6;
-    player2Pieces[6].col = 5;
-    this.board[6][7] = player2Pieces[7];
+    player2Pieces[6].col = 4;
+    this.board[6][6] = player2Pieces[7];
     player2Pieces[7].row = 6;
-    player2Pieces[7].col = 7;
-    this.board[5][0] = player2Pieces[8];
+    player2Pieces[7].col = 6;
+    this.board[5][1] = player2Pieces[8];
     player2Pieces[8].row = 5;
-    player2Pieces[8].col = 0;
-    this.board[5][2] = player2Pieces[9];
+    player2Pieces[8].col = 1;
+    this.board[5][3] = player2Pieces[9];
     player2Pieces[9].row = 5;
-    player2Pieces[9].col = 2;
-    this.board[5][4] = player2Pieces[10];
+    player2Pieces[9].col = 3;
+    this.board[5][5] = player2Pieces[10];
     player2Pieces[10].row = 5;
-    player2Pieces[10].col = 4;
-    this.board[5][6] = player2Pieces[11];
+    player2Pieces[10].col = 5;
+    this.board[5][7] = player2Pieces[11];
     player2Pieces[11].row = 5;
-    player2Pieces[11].col = 6;
-    console.log("Board after place pieces");
-    console.log(this.board);
-    console.log(this.players);
+    player2Pieces[11].col = 7;
   },
   drawPieces: function(){
     var player1Pieces = this.players[0].pieces;
@@ -209,22 +86,446 @@ var game = {
     for(var i = 0; i < player1Pieces.length;i++){
       var piece1 = player1Pieces[i];
       var piece2 = player2Pieces[i];
-      piece1.draw();
-      piece1.scale();
-      piece2.draw();
-      piece2.scale();
+      piece1.draw(i);
+      piece2.draw(i);
+    }
+  },
+  nextPlayer: function(){
+    if(this.isGameOver()){
+      console.log("Game Over");
+    }else{
+      this.locked = false;
+      if(this.currentPlayer == 1){
+        this.players[0].unplay();
+        this.players[1].play();
+        this.currentPlayer = 2;
+      }else{
+        this.players[1].unplay();
+        this.players[0].play();
+        this.currentPlayer = 1;
+      }
+      this.updateCurrentPlayer();
+    }
+  },isGameOver: function(){
+    var player1 = this.players[0];
+    var player2 = this.players[1];
+    var gameOver1 = checkGameOver(player1);
+    var gameOver2 = checkGameOver(player2);
+    if(gameOver1 || gameOver2){
+      return true
+    }else{
+      return false
+    }
+  },updateBoard: function(piece,row,col){
+    var oldRow = piece.row;
+    var oldCol = piece.col;
+    this.board[oldRow][oldCol] = 0;
+    this.board[row][col] = piece;
+  },updateCurrentPlayer: function(){
+    var currentPlayer = this.currentPlayer
+    $("#currentPlayer").html('<h1 id = "player"' + currentPlayer + '>Player ' + currentPlayer + '</h1>');
+  }
+}
 
+function checkGameOver(player){
+  for(var i = 0; i < player.pieces.length;i++){
+    var piece = player.pieces[i];
+    if(piece.removed == false){
+      return false;
+    }
+  }
+  return true;
+}
+
+function makePlayers(){
+  var players = [];
+  var player1 = new Player(true,1);
+  var player2 = new Player(false,2);
+  players.push(player1)
+  players.push(player2)
+  return players;
+}
+
+function Player(home,num){
+  this.home = home;
+  this.pieces = makePieces(num);
+  this.num = num;
+  this.winner = false;
+}
+
+function makePieces(num){
+  var pieces = [];
+  for(var i = 0; i < 12; i++){
+    var id = num*12-12+i+1
+    var piece = new Piece(num,id);
+    pieces.push(piece);
+  }
+  return pieces;
+}
+
+function Piece(num,id){
+  this.king = false;
+  this.row = 0;
+  this.col = 0;
+  this.player = num;
+  this.taken = false;
+  this.id = id;
+  this.removed = false;
+}
+
+function makeBoard(){
+  var board = [];
+  for(var i = 0; i < 8; i++){
+    var row = [];
+    for(var j = 0; j < 8; j++){
+      row.push(0);
+    }
+    board.push(row);
+  }
+  return board;
+}
+
+Player.prototype.play = function(){
+  var pieces = this.pieces;
+  for(var i = 0; i < pieces.length;i++){
+    pieces[i].initateMove();
+  }
+}
+
+Player.prototype.unplay = function(){
+  var pieces = this.pieces;
+  for(var i = 0; i < pieces.length;i++){
+    pieces[i].stopMove();
+  }
+}
+
+Piece.prototype.stopMove = function(){
+  $(this.div).unbind("click");
+}
+
+Piece.prototype.initateMove = function(){
+  if(this.canMove()){
+    var piece = this;
+    var row = this.row+1;
+    var col = this.col;
+    $(this.div).click(function(event){
+      event.stopPropagation();
+      if(game.locked == false){
+        game.locked = true;
+        $(this).addClass("glow");
+        var pieceX = event.pageX;
+        var pieceY = event.pageY;
+        piece.makeMove(pieceX,pieceY);
+      }else{
+        console.log("The game is currently locked.");
+        //$(this).removeClass("glow");
+        //$(this).unbind("click");
+      }
+    });
+  }
+}
+
+Piece.prototype.canMove = function(){
+  var row = this.row;
+  var col = this.col;
+  if(this.king){
+    var move1Row = row+1;
+    var move1Col = col+1;
+    var move2Row = row+1;
+    var move2Col = col-1;
+    var move3Row = row-1;
+    var move3Col = col+1;
+    var move4Row = row-1;
+    var move4Col = col-1;
+    if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col) || this.isLegal(move3Row,move3Col) || this.isLegal(move4Row,move4Col)){
+      return true;
+    }else{
+      return false
+    }
+  }else{
+    if(this.player == 1){
+      var move1Row = row+1;
+      var move1Col = col+1;
+      var move2Row = row+1;
+      var move2Col = col-1;
+    }else if(this.player == 2){
+      var move1Row = row-1;
+      var move1Col = col+1;
+      var move2Row = row-1;
+      var move2Col = col-1;
+    }
+    if(this.isLegal(move1Row,move1Col) || this.isLegal(move2Row,move2Col)){
+      return true;
+    }else{
+      return false;
     }
   }
 }
 
+Piece.prototype.isLegal = function(row,col){
+  var board = game.board;
+  var pieceCol = this.col;
+  if(row < 0 || row > 7){
+    return false;
+  }
+  var newMove = board[row][col];
+  var player = this.player
+  if(newMove!= 0 && newMove != undefined){
+    var otherPlayer = newMove.player;
+  }
+  if(newMove == 0){
+    return true;
+  }else if(otherPlayer != undefined && otherPlayer != player){
+    if(col > this.col){
+      console.log("Col is great than current col");
+      if(this.canEat(row,col,"right")){
+        console.log("Can eat returned true")
+        return true;
+      }else{
+        console.log("Can eat returned false")
+        return false;
+      }
+    }else if(col < this.col){
+      console.log("Col is less than current col");
+      if(this.canEat(row,col,"left")){
+        console.log("Can eat return true");
+        return true;
+      }else{
+        console.log("Can eat returned false")
+        return false;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+Piece.prototype.canEat = function(row,col,direction){
+  var currentPlayer = this.player;
+  var otherPlayer = game.board[row][col].player;
+  if(direction == "right"){
+    var otherCol = col + 1;
+  }else if(direction == "left"){
+    var otherCol = col - 1;
+  }
+  if(this.king == true){
+    if(this.row < row){
+      var otherRow = row + 1;
+    }else{
+      var otherRow = row - 1;
+    }
+  }else{
+    if(this.player == 1){
+      var otherRow = row+1;
+    }else{
+      var otherRow = row-1;
+    }
+  }
+  if(otherRow > 7 || otherRow < 0){
+    return false;
+  }
+  var otherSpace = game.board[otherRow][otherCol];
+  if(otherSpace == 0 && otherPlayer != undefined && otherPlayer != currentPlayer){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+Piece.prototype.makeMove = function(pieceX,pieceY){
+  var piece = this;
+  var row = this.row;
+  var col = this.col;
+  if(this.player == 1){
+    var move1Row = row+1;
+    var move1Col = col+1;
+    var move2Row = row+1;
+    var move2Col = col-1;
+  }else{
+    var move1Row = row-1;
+    var move1Col = col+1;
+    var move2Row = row-1;
+    var move2Col = col-1;
+  }
+  $(document).click(function(event){
+    var x = event.pageX;
+    var y = event.pageY;
+    if(piece.king == false){
+        if(x > pieceX){
+          makeMoveRight(move1Row,move1Col,piece);
+          $(this).unbind("click");
+        }else if(x < pieceX){
+          makeMoveLeft(move2Row,move2Col,piece);
+          $(this).unbind("click");
+        }else{
+          console.log("Wtf");
+        }
+    }else if(piece.king == true){
+      if(x > pieceX && y < pieceY){
+        makeMoveRightUp(row,col,piece);
+        $(this).unbind("click");
+      }else if(x < pieceX && y < pieceY){
+        makeMoveLeftUp(row,col,piece);
+        $(this).unbind("click");
+      }else if(x > pieceX && y > pieceY){
+        makeMoveRightDown(row,col,piece);
+        $(this).unbind("click");
+      }else if(x < pieceX && y > pieceY){
+        makeMoveLeftDown(row,col,piece);
+        $(this).unbind("click");
+      }
+    }
+  });
+}
+
+function makeMoveLeftUp(row,col,piece){
+  var newRow = row - 1;
+  var newCol = col - 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"left")){
+      piece.eat(newRow,newCol)
+      newRow--;
+      newCol--;
+    };
+    piece.placePiece(newRow,newCol);
+    $(piece.div).unbind("click")
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveRightUp(row,col,piece){
+  var newRow = row - 1;
+  var newCol = col + 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"right")){
+      piece.eat(newRow,newCol)
+      newRow--;
+      newCol++;
+    };
+    piece.placePiece(newRow,newCol);
+    $(piece.div).unbind("click")
+  }else{
+    piece.illegalMove();
+  }
+};
+
+function makeMoveRightDown(row,col,piece){
+  var newRow = row + 1;
+  var newCol = col + 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"right")){
+      piece.eat(newRow,newCol)
+      newRow++;
+      newCol++;
+    };
+    piece.placePiece(newRow,newCol);
+    $(piece.div).unbind("click")
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveLeftDown(row,col,piece){
+  var newRow = row + 1;
+  var newCol = col - 1;
+  if(piece.isLegal(newRow,newCol)){
+    if(piece.canEat(newRow,newCol,"left")){
+      piece.eat(newRow,newCol)
+      newRow++;
+      newCol--;
+    };
+    piece.placePiece(newRow,newCol);
+    $(piece.div).unbind("click")
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveRight(move1Row,move1Col,piece){
+  if(piece.isLegal(move1Row,move1Col)){
+    if(piece.canEat(move1Row,move1Col,"right")){
+      piece.eat(move1Row,move1Col);
+      if(piece.player == 1){
+        move1Row++;
+      }else{
+        move1Row--;
+      }
+      move1Col++;
+    };
+    piece.placePiece(move1Row,move1Col);
+    $(piece.div).unbind("click")
+  }else{
+    piece.illegalMove();
+  }
+}
+
+function makeMoveLeft(move2Row,move2Col,piece){
+  if(piece.isLegal(move2Row,move2Col)){
+    if(piece.canEat(move2Row,move2Col,"left")){
+      //if(piece.doubleEat(move2Row,move2Col,"left")){}
+      piece.eat(move2Row,move2Col);
+      if(piece.player == 1){
+        move2Row++;
+      }else{
+        move2Row--;
+      }
+      move2Col--;
+    };
+    piece.placePiece(move2Row,move2Col);
+    $(this).unbind("click");
+  }else{
+    piece.illegalMove();
+  }
+};
+
+Piece.prototype.eat = function(row,col){
+  var piece = game.board[row][col];
+  console.log("This is the piece in that is going to be eaten");
+  console.log(piece);
+  piece.removePiece();
+  console.log(game.players);
+  game.board[row][col] = 0;
+}
+
+Piece.prototype.placePiece = function(row,col){
+  this.removePiece();
+  game.updateBoard(this,row,col);
+  this.row = row;
+  this.col = col;
+  if(this.row == 7 || this.row == 0){
+    this.king = true;
+  }
+  this.draw();
+  game.nextPlayer();
+}
+
+Piece.prototype.removePiece = function(){
+  $(this.div).html("");
+  $(this.div).removeClass("glow");
+  this.removed = true;
+}
+
+Piece.prototype.draw = function(num){
+  var row = this.row+1;
+  var col = this.col;
+  var rowDiv = $("#"+row);
+  this.div = rowDiv.children()[col+2];
+  var piece = this;
+  if(this.king == true){
+    $(this.div).html('<span class="glyphicon glyphicon-tower player' + this.player + '" aria-hidden="true"></span>');
+  }else if(this.king == false){
+    $(this.div).html('<span class="glyphicon glyphicon-record player' + this.player + '" aria-hidden="true"></span>');
+  }
+}
+
+Piece.prototype.illegalMove = function(){
+  $(this.div).removeClass("glow");
+  $(this).unbind("click");
+  game.locked = false;
+}
 
 $(document).ready(function(){
-	window.resizeTo(1000,1000)
-  var windowWidth = $(window).width()/2;
-	var windowHeight = $(window).height();
-  var board = $("#boardImage");
-	board.css({"width":windowWidth.toString(),"height":windowHeight.toString()});
   game.placePieces();
   game.drawPieces();
   game.players[0].play();

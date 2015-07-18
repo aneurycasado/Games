@@ -1,18 +1,166 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Checkers</title>
-    <link href ="style.css" rel="stylesheet" media="screen">
-  </head>
+<head>
+  <title>Checkers</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href ="css/styles.css" rel="stylesheet" media="screen">
+</head>
 
   <body>
-    <div id = "container">
-      <div id = "board">
-        <img id ="boardImage" src = "img/checkerboard.jpg"/>
-        <div id = "pieces"></div>
+    <div class = "container">
+
+      <div class="modal fade" id = "myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header" >
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id = "modalHeader">Modal title</h4>
+            </div>
+            <div class="modal-body" id = "modalBody">
+            </div>
+            <div class="modal-footer" id = "modalFooter">
+              <button type="button" class="btn btn-primary">Play again</button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class = "row">
+        <div class = "col-xs-6">
+          <h1> Checkers</h1>
+        </div>
+        <div class = "col-xs-6" id = "currentPlayer">
+          <h1> Player 1's Turn </h1>
+        </div>
+      </div>
+
+      <div id = "board">
+
+        <div class = "row" id = "1">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "2">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "3">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "4">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "5">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "6">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "7">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+        <div class = "row" id = "8">
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 blue"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+          <div class = "col-xs-1 white"></div>
+        </div>
+
+      </div>
+
       <script src="http://code.jquery.com/jquery.js"></script>
       <script src = "checkers.js"></script>
+
     </div>
   </body>
 
